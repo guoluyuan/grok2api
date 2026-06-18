@@ -24,7 +24,7 @@ services:
 
   # ── Privoxy: HTTP 代理，转发到 WARP SOCKS5 ───────────────────────────────
   privoxy:
-    image: ghcr.io/jiujiu532/privoxy-warp:latest
+    image: ghcr.io/guoluyuan/privoxy-warp:latest
     container_name: privoxy
     restart: unless-stopped
     ports:
@@ -43,7 +43,7 @@ services:
 
   # ── grok2api ──────────────────────────────────────────────────────────────
   grok2api:
-    image: ghcr.io/jiujiu532/grok2api:latest
+    image: ghcr.io/guoluyuan/grok2api:latest
     container_name: grok2api
     restart: unless-stopped
     ports:
@@ -62,6 +62,8 @@ services:
     volumes:
       - ./data:/app/data
       - ./logs:/app/logs
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
     depends_on:
       init-config:
         condition: service_completed_successfully
@@ -71,3 +73,17 @@ services:
         condition: service_started
       flaresolverr:
         condition: service_started
+
+  # Watchtower: auto-update grok2api only
+  watchtower:
+    image: containrrr/watchtower:latest
+    container_name: grok2api-watchtower
+    restart: unless-stopped
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      TZ: Asia/Shanghai
+      WATCHTOWER_LABEL_ENABLE: "true"
+      WATCHTOWER_CLEANUP: "true"
+      WATCHTOWER_ROLLING_RESTART: "true"
+      WATCHTOWER_POLL_INTERVAL: "${WATCHTOWER_POLL_INTERVAL:-3600}"

@@ -14,7 +14,7 @@
 <p>
 <a href="https://www.python.org/"><img alt="Python" src="https://img.shields.io/badge/python-3.13%2B-3776AB?logo=python&logoColor=white"></a>
 <a href="https://fastapi.tiangolo.com/"><img alt="FastAPI" src="https://img.shields.io/badge/FastAPI-0.119%2B-009688?logo=fastapi&logoColor=white"></a>
-<a href="https://github.com/jiujiu532/grok2api/pkgs/container/grok2api"><img alt="Docker" src="https://img.shields.io/badge/ghcr.io-jiujiu532%2Fgrok2api-2496ED?logo=docker&logoColor=white"></a>
+<a href="https://github.com/guoluyuan/grok2api/pkgs/container/grok2api"><img alt="Docker" src="https://img.shields.io/badge/ghcr.io-guoluyuan%2Fgrok2api-2496ED?logo=docker&logoColor=white"></a>
 <a href="LICENSE"><img alt="License" src="https://img.shields.io/badge/license-MIT-16a34a"></a>
 </p>
 
@@ -32,7 +32,7 @@
 > [!NOTE]
 > 本项目仅供学习与研究交流。请务必遵守 Grok 的使用条款及当地法律法规，不得用于非法用途。
 
-本仓库基于上游 [chenyme/grok2api](https://github.com/chenyme/grok2api) 二次开发，新增多账号池管理、Console 免费模型、配额轮换、防封部署等能力。欢迎 PR 和 Fork，二开请保留原作者与前端标识。
+本仓库为 [guoluyuan/grok2api](https://github.com/guoluyuan/grok2api)，新增多账号池管理、Console 免费模型、配额轮换、防封部署等能力。
 
 ---
 
@@ -69,7 +69,7 @@
 **Docker Compose（推荐）：**
 
 ```bash
-git clone https://github.com/jiujiu532/grok2api
+git clone https://github.com/guoluyuan/grok2api
 cd grok2api/grok2api-main/grok2api-main
 cp .env.example .env
 docker compose up -d
@@ -92,7 +92,7 @@ docker run -d --name grok2api \
   -v $(pwd)/data:/app/data \
   -v $(pwd)/logs:/app/logs \
   --restart unless-stopped \
-  ghcr.io/jiujiu532/grok2api:latest
+  ghcr.io/guoluyuan/grok2api:latest
 ```
 
 Windows PowerShell：
@@ -107,7 +107,7 @@ docker run -d `
   -v ${PWD}/data:/app/data `
   -v ${PWD}/logs:/app/logs `
   --restart unless-stopped `
-  ghcr.io/jiujiu532/grok2api:latest
+  ghcr.io/guoluyuan/grok2api:latest
 ```
 
 ---
@@ -117,7 +117,7 @@ docker run -d `
 > **前置要求**：服务器需支持 `NET_ADMIN` + `SYS_MODULE` 权限（KVM/XEN 虚拟化均支持，OpenVZ/LXC 不支持）。
 
 ```bash
-git clone https://github.com/jiujiu532/grok2api
+git clone https://github.com/guoluyuan/grok2api
 cd grok2api/grok2api-main/grok2api-main
 docker compose -f docker-compose.warp.yml up -d
 ```
@@ -146,14 +146,14 @@ docker compose -f docker-compose.warp.yml up -d
 **标准版升级：**
 
 ```bash
-docker pull ghcr.io/jiujiu532/grok2api:latest
+docker pull ghcr.io/guoluyuan/grok2api:latest
 docker compose up -d --no-deps grok2api
 ```
 
 **防封版升级（只更新主服务，不动 WARP/FlareSolverr）：**
 
 ```bash
-docker pull ghcr.io/jiujiu532/grok2api:latest
+docker pull ghcr.io/guoluyuan/grok2api:latest
 docker compose -f docker-compose.warp.yml up -d --no-deps grok2api
 ```
 
@@ -164,8 +164,8 @@ docker compose -f docker-compose.warp.yml up -d --no-deps grok2api
 ### 回滚
 
 ```bash
-# 查看可用版本：https://github.com/jiujiu532/grok2api/pkgs/container/grok2api
-docker pull ghcr.io/jiujiu532/grok2api:<tag>
+# 查看可用版本：https://github.com/guoluyuan/grok2api/pkgs/container/grok2api
+docker pull ghcr.io/guoluyuan/grok2api:<tag>
 
 # 标准版回滚
 docker compose up -d --no-deps grok2api
@@ -215,7 +215,7 @@ docker compose -f docker-compose.warp.yml up -d
 前置：Python 3.13+、[uv](https://docs.astral.sh/uv/getting-started/installation/)
 
 ```bash
-git clone https://github.com/jiujiu532/grok2api
+git clone https://github.com/guoluyuan/grok2api
 cd grok2api/grok2api-main/grok2api-main
 cp .env.example .env && uv sync
 uv run granian --interface asgi --host 0.0.0.0 --port 8000 --workers 1 app.main:app
@@ -391,7 +391,7 @@ curl http://localhost:8000/v1/chat/completions \
 
 **新功能**
 
-- 🔌 **Console 原生工具调用支持**（[PR#24](https://github.com/jiujiu532/grok2api/pull/24)，感谢 @daoguademeng）
+- 🔌 **Console 原生工具调用支持**（[PR#24](https://github.com/guoluyuan/grok2api/pull/24)，感谢 @daoguademeng）
   - Console 模型支持 OpenAI 兼容的 `tools` / `tool_choice` 参数
   - 客户端 function tools（如 bash、read）可稳定产出 `tool_calls`
   - Grok 内置工具（web_search、x_search 等 19 个）保持内部语义，不泄露为客户端 tool_calls
@@ -407,7 +407,7 @@ curl http://localhost:8000/v1/chat/completions \
 
 **修复**
 
-- 🐛 修复 NSFW 初始化时生日已锁定的 429 报错（[PR#25](https://github.com/jiujiu532/grok2api/pull/25)，感谢 @Xaihi-nun）
+- 🐛 修复 NSFW 初始化时生日已锁定的 429 报错（[PR#25](https://github.com/guoluyuan/grok2api/pull/25)，感谢 @Xaihi-nun）
 - 🐛 修复批量刷新结果未区分异常与临时失败的问题
 
 ### v0.1.5 (2025-06-13)
@@ -419,7 +419,7 @@ curl http://localhost:8000/v1/chat/completions \
   - 后端性能优化：批量查询失败账户状态（从 N 次数据库查询降为 1 次）
   - 异常账户自动进入"异常"筛选组，临时失败不影响账户状态
 
-- 🎯 **导入账户交互改进**（基于 [PR#13](https://github.com/jiujiu532/grok2api/pull/13)）
+- 🎯 **导入账户交互改进**（基于 [PR#13](https://github.com/guoluyuan/grok2api/pull/13)）
   - 新增/导入弹窗中加入"导入后自动开启 NSFW"复选框（默认不勾选）
   - 工具栏按钮互斥显示：勾选账号时显示批量操作按钮，未勾选显示全局按钮
   - 去除全局配置 `account.auto_nsfw_on_import`，改为每次导入时手动选择
@@ -439,16 +439,15 @@ curl http://localhost:8000/v1/chat/completions \
 
 ## 致谢
 
-- 上游：[chenyme/grok2api](https://github.com/chenyme/grok2api)
-- DeepWiki：[chenyme/grok2api](https://deepwiki.com/chenyme/grok2api)
-- 项目文档：[blog.cheny.me](https://blog.cheny.me/blog/posts/grok2api)
+- 当前仓库：[guoluyuan/grok2api](https://github.com/guoluyuan/grok2api)
+- 项目文档：[guoluyuan/grok2api](https://github.com/guoluyuan/grok2api)
 - 社区：[Linux.do](https://linux.do)
 
 ---
 
 ## Star History
 
-[![Star History Chart](https://api.star-history.com/svg?repos=jiujiu532/grok2api&type=Date)](https://star-history.com/#jiujiu532/grok2api&Date)
+[![Star History Chart](https://api.star-history.com/svg?repos=guoluyuan/grok2api&type=Date)](https://star-history.com/#guoluyuan/grok2api&Date)
 
 ---
 

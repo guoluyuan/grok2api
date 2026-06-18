@@ -10,8 +10,8 @@ window.renderAdminHeader = async function renderAdminHeader() {
       return 'v1';
     }
   })();
-  const HEADER_HTML_CACHE_KEY = `grok2api.admin_header_html.${scriptVersion}`;
-  const META_VERSION_CACHE_KEY = `grok2api.meta_version.${scriptVersion}`;
+  const HEADER_HTML_CACHE_KEY = `grok2api.admin_header_html.${scriptVersion}.guoluyuan`;
+  const META_VERSION_CACHE_KEY = `grok2api.meta_version.${scriptVersion}.guoluyuan`;
   let appVersion = '';
   let updateInfo = null;
   let updateStatus = 'idle';
@@ -554,10 +554,10 @@ window.renderAdminHeader = async function renderAdminHeader() {
       <header class="admin-header">
         <div class="admin-header-inner">
           <div class="admin-brand-wrap">
-            <a href="https://github.com/chenyme/grok2api" target="_blank" rel="noopener" class="admin-brand-link">
-              <span class="admin-brand">Grok2API</span>
+            <a href="https://github.com/guoluyuan/grok2api" target="_blank" rel="noopener" class="admin-brand-link">
+              <span class="admin-brand">guoluyuan/grok2api</span>
             </a>
-            <a href="https://blog.cheny.me/" target="_blank" rel="noopener" class="admin-username" id="hd-user">@Chenyme</a>
+            <a href="https://github.com/guoluyuan" target="_blank" rel="noopener" class="admin-username" id="hd-user">@guoluyuan</a>
           </div>
           <nav class="admin-nav">
             <a href="/admin/account" class="admin-nav-link" data-nav="/admin/account" data-i18n="header.account">账户管理</a>

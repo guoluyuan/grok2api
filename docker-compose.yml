@@ -1,7 +1,7 @@
 services:
   grok2api:
     container_name: grok2api
-    image: ghcr.io/jiujiu532/grok2api:latest
+    image: ghcr.io/guoluyuan/grok2api:latest
     ports:
       - "${HOST_PORT:-8000}:${SERVER_PORT:-8000}"
     environment:
@@ -29,6 +29,21 @@ services:
       - ./data:/app/data
       - ./logs:/app/logs
     restart: unless-stopped
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
+
+  watchtower:
+    container_name: grok2api-watchtower
+    image: containrrr/watchtower:latest
+    restart: unless-stopped
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      TZ: Asia/Shanghai
+      WATCHTOWER_LABEL_ENABLE: "true"
+      WATCHTOWER_CLEANUP: "true"
+      WATCHTOWER_ROLLING_RESTART: "true"
+      WATCHTOWER_POLL_INTERVAL: "${WATCHTOWER_POLL_INTERVAL:-3600}"
 
   # 如果出口 IP 不干净，可取消以下注释使用 Warp 作为落地代理
   # 启用后将 proxy.base_proxy_url 设为 socks5://warp:1080
