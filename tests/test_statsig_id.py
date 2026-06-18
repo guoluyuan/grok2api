@@ -1,4 +1,5 @@
 import base64
+import hashlib
 import importlib.util
 import pathlib
 import sys
@@ -38,20 +39,50 @@ headers = _load_headers_module()
 
 
 class _DummyConfig:
+    def __init__(self, enabled=True):
+        self.enabled = enabled
+
     def get_bool(self, key, default=False):
         if key == "features.dynamic_statsig":
-            return True
+            return self.enabled
         return default
 
 
-class StatsigIdTests(unittest.TestCase):
-    def test_dynamic_statsig_uses_x1_prefix(self):
-        with patch.object(headers, "get_config", return_value=_DummyConfig()):
-            with patch.object(headers.random, "choice", return_value=True):
-                value = headers._statsig_id()
+def _decode_statsig(value: str) -> bytes:
+    raw = base64.b64decode(value + "=" * (-len(value) % 4))
+    key = raw[0]
+    return bytes(byte if index == 0 else byte ^ key for index, byte in enumerate(raw))
 
-        decoded = base64.b64decode(value).decode()
-        self.assertTrue(decoded.startswith("x1:TypeError:"))
+
+class StatsigIdTests(unittest.TestCase):
+    def test_dynamic_statsig_matches_current_frontend_shape(self):
+        counter = 98852040
+        path = "/rest/rate-limits"
+        method = "POST"
+
+        with patch.object(headers, "get_config", return_value=_DummyConfig()):
+            with patch.object(headers.time, "time", return_value=headers.STATSIG_EPOCH + counter):
+                with patch.object(headers.os, "urandom", return_value=b"\x7b"):
+                    value = headers._statsig_id(path, method)
+
+        body = _decode_statsig(value)
+        expected_meta = base64.b64decode(headers.STATSIG_META_B64)
+        expected_preimage = (
+            f"{method}!{path}!{counter}"
+            f"{headers.STATSIG_SUFFIX}{headers.STATSIG_FINGERPRINT}"
+        )
+        expected_digest = hashlib.sha256(expected_preimage.encode()).digest()[:16]
+
+        self.assertEqual(len(body), 70)
+        self.assertEqual(body[0], 0x7B)
+        self.assertEqual(body[1:49], expected_meta)
+        self.assertEqual(int.from_bytes(body[49:53], "little"), counter)
+        self.assertEqual(body[53:69], expected_digest)
+        self.assertEqual(body[69], headers.STATSIG_VERSION)
+
+    def test_static_statsig_keeps_legacy_value_when_dynamic_disabled(self):
+        with patch.object(headers, "get_config", return_value=_DummyConfig(False)):
+            self.assertEqual(headers._statsig_id(), headers.STATIC_STATSIG_ID)
 
 
 if __name__ == "__main__":

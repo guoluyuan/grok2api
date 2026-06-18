@@ -4,9 +4,10 @@ All values are sanitized to ASCII-safe Latin-1 before use.
 """
 
 import base64
-import random
+import hashlib
+import os
 import re
-import string
+import time
 import uuid
 from typing import Optional
 from urllib.parse import urlparse
@@ -64,20 +65,54 @@ def _sanitize(value: Optional[str], *, field: str, strip_spaces: bool = False) -
 # ---------------------------------------------------------------------------
 
 
-def _statsig_id() -> str:
-    cfg = get_config()
-    if cfg.get_bool("features.dynamic_statsig", False):
-        if random.choice((True, False)):
-            rand = "".join(random.choices(string.ascii_lowercase + string.digits, k=5))
-            msg = f"x1:TypeError: Cannot read properties of null (reading 'children['{rand}']')"
-        else:
-            rand = "".join(random.choices(string.ascii_lowercase, k=10))
-            msg = f"x1:TypeError: Cannot read properties of undefined (reading '{rand}')"
-        return base64.b64encode(msg.encode()).decode()
-    return (
-        "ZTpUeXBlRXJyb3I6IENhbm5vdCByZWFkIHByb3BlcnRpZXMgb2YgdW5kZWZpbmVkIChyZWFkaW5nICdjaGls"
-        "ZE5vZGVzJyk="
-    )
+STATSIG_EPOCH = 0x644F6370
+STATSIG_SUFFIX = "obfiowerehiring"
+STATSIG_VERSION = 3
+STATSIG_META_B64 = (
+    "0rQc0/MTeFJ7s6vL07WzyiLuyf52IByi8JQv26wajqczpSj2+apTU7eF5yAyfqLc"
+)
+STATSIG_FINGERPRINT = (
+    "76ce110f5c28f5c28f5c0451eb851eb8520451eb851eb8520f5c28f5c28f5c00"
+)
+STATIC_STATSIG_ID = (
+    "ZTpUeXBlRXJyb3I6IENhbm5vdCByZWFkIHByb3BlcnRpZXMgb2YgdW5kZWZpbmVkIChyZWFkaW5nICdjaGls"
+    "ZE5vZGVzJyk="
+)
+
+
+def _dynamic_statsig_enabled() -> bool:
+    return get_config().get_bool("features.dynamic_statsig", False)
+
+
+def _statsig_body(path: str, method: str, counter: int) -> bytearray:
+    preimage = f"{method}!{path}!{counter}{STATSIG_SUFFIX}{STATSIG_FINGERPRINT}"
+    digest = hashlib.sha256(preimage.encode("utf-8")).digest()[:16]
+    meta = base64.b64decode(STATSIG_META_B64 + "=" * (-len(STATSIG_META_B64) % 4))
+
+    body = bytearray()
+    body.append(os.urandom(1)[0])
+    body.extend(meta)
+    body.extend(counter.to_bytes(4, byteorder="little", signed=False))
+    body.extend(digest)
+    body.append(STATSIG_VERSION)
+    return body
+
+
+def _encode_statsig_body(body: bytearray) -> str:
+    key = body[0]
+    encoded = bytes(byte if index == 0 else byte ^ key for index, byte in enumerate(body))
+    return base64.b64encode(encoded).decode("ascii").replace("=", "")
+
+
+def _statsig_id(
+    path: str = "/rest/app-chat/conversations/new",
+    method: str = "POST",
+) -> str:
+    if not _dynamic_statsig_enabled():
+        return STATIC_STATSIG_ID
+
+    counter = int(time.time()) - STATSIG_EPOCH
+    return _encode_statsig_body(_statsig_body(path, method, counter))
 
 
 # ---------------------------------------------------------------------------
@@ -86,10 +121,18 @@ def _statsig_id() -> str:
 
 
 def _major_version(browser: Optional[str], ua: Optional[str]) -> Optional[str]:
-    for src in (browser or "", ua or ""):
-        m = re.search(r"(\d{2,3})", src)
-        if m:
-            return m.group(1)
+    ua_match = re.search(r"(?:Chrome|Chromium|CriOS|Edg|Firefox)/(\d{2,3})", ua or "")
+    if ua_match:
+        return ua_match.group(1)
+
+    browser_match = re.search(
+        r"(?:chrome|chromium|edge|firefox)(\d{2,3})",
+        browser or "",
+        re.I,
+    )
+    if browser_match:
+        return browser_match.group(1)
+
     return None
 
 
