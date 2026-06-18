@@ -66,6 +66,7 @@ COPY app ./app
 COPY scripts ./scripts
 
 RUN mkdir -p /app/data /app/logs \
+    && find /app/scripts -type f -name "*.sh" -exec sed -i 's/\r$//' {} + \
     && chmod +x /app/scripts/entrypoint.sh /app/scripts/init_storage.sh
 
 EXPOSE 8000

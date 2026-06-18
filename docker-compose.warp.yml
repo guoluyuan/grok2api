@@ -43,7 +43,7 @@ services:
 
   # ── grok2api ──────────────────────────────────────────────────────────────
   grok2api:
-    image: ghcr.io/guoluyuan/grok2api:latest
+    image: mp740429299/guogai_grok2api:latest
     container_name: grok2api
     restart: unless-stopped
     ports:

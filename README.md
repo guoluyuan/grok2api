@@ -14,7 +14,7 @@
 <p>
 <a href="https://www.python.org/"><img alt="Python" src="https://img.shields.io/badge/python-3.13%2B-3776AB?logo=python&logoColor=white"></a>
 <a href="https://fastapi.tiangolo.com/"><img alt="FastAPI" src="https://img.shields.io/badge/FastAPI-0.119%2B-009688?logo=fastapi&logoColor=white"></a>
-<a href="https://github.com/guoluyuan/grok2api/pkgs/container/grok2api"><img alt="Docker" src="https://img.shields.io/badge/ghcr.io-guoluyuan%2Fgrok2api-2496ED?logo=docker&logoColor=white"></a>
+<a href="https://hub.docker.com/r/mp740429299/guogai_grok2api"><img alt="Docker" src="https://img.shields.io/badge/dockerhub-mp740429299%2Fguogai_grok2api-2496ED?logo=docker&logoColor=white"></a>
 <a href="LICENSE"><img alt="License" src="https://img.shields.io/badge/license-MIT-16a34a"></a>
 </p>
 
@@ -92,7 +92,7 @@ docker run -d --name grok2api \
   -v $(pwd)/data:/app/data \
   -v $(pwd)/logs:/app/logs \
   --restart unless-stopped \
-  ghcr.io/guoluyuan/grok2api:latest
+  mp740429299/guogai_grok2api:latest
 ```
 
 Windows PowerShell：
@@ -107,7 +107,7 @@ docker run -d `
   -v ${PWD}/data:/app/data `
   -v ${PWD}/logs:/app/logs `
   --restart unless-stopped `
-  ghcr.io/guoluyuan/grok2api:latest
+  mp740429299/guogai_grok2api:latest
 ```
 
 ---
@@ -146,14 +146,14 @@ docker compose -f docker-compose.warp.yml up -d
 **标准版升级：**
 
 ```bash
-docker pull ghcr.io/guoluyuan/grok2api:latest
+docker pull mp740429299/guogai_grok2api:latest
 docker compose up -d --no-deps grok2api
 ```
 
 **防封版升级（只更新主服务，不动 WARP/FlareSolverr）：**
 
 ```bash
-docker pull ghcr.io/guoluyuan/grok2api:latest
+docker pull mp740429299/guogai_grok2api:latest
 docker compose -f docker-compose.warp.yml up -d --no-deps grok2api
 ```
 
@@ -164,8 +164,8 @@ docker compose -f docker-compose.warp.yml up -d --no-deps grok2api
 ### 回滚
 
 ```bash
-# 查看可用版本：https://github.com/guoluyuan/grok2api/pkgs/container/grok2api
-docker pull ghcr.io/guoluyuan/grok2api:<tag>
+# 查看可用版本：https://hub.docker.com/r/mp740429299/guogai_grok2api/tags
+docker pull mp740429299/guogai_grok2api:<tag>
 
 # 标准版回滚
 docker compose up -d --no-deps grok2api

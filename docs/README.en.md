@@ -4,7 +4,7 @@
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.119%2B-009688?logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
 [![Version](https://img.shields.io/badge/version-2.0.4.rc4-111827)](../grok2api-main/grok2api-main/pyproject.toml)
 [![License](https://img.shields.io/badge/license-MIT-16a34a)](../LICENSE)
-[![Docker](https://img.shields.io/badge/ghcr.io-jiujiu532%2Fgrok2api-2496ED?logo=docker&logoColor=white)](https://github.com/jiujiu532/grok2api/pkgs/container/grok2api)
+[![Docker](https://img.shields.io/badge/dockerhub-mp740429299%2Fguogai_grok2api-2496ED?logo=docker&logoColor=white)](https://hub.docker.com/r/mp740429299/guogai_grok2api)
 [![中文](https://img.shields.io/badge/%E4%B8%AD%E6%96%87-DC2626?logo=bookstack&logoColor=white)](../README.md)
 
 > [!NOTE]
@@ -27,11 +27,11 @@ Grok2API is a **FastAPI**-based Grok gateway that exposes Grok's web capabilitie
 
 ## Image Info
 
-This repository builds on top of [chenyme/grok2api](https://github.com/chenyme/grok2api) and ships a prebuilt Docker image:
+This repository is [guoluyuan/grok2api](https://github.com/guoluyuan/grok2api) and ships a prebuilt Docker image:
 
 | Field | Value |
 | :-- | :-- |
-| Image | `ghcr.io/jiujiu532/grok2api:latest` |
+| Image | `mp740429299/guogai_grok2api:latest` |
 | Architecture | `linux/amd64` |
 | Base image | `python:3.13-alpine` |
 | Default port | `8000` |
@@ -45,7 +45,7 @@ This repository builds on top of [chenyme/grok2api](https://github.com/chenyme/g
 ### Option 1: Docker Compose (recommended)
 
 ```bash
-git clone https://github.com/jiujiu532/grok2api
+git clone https://github.com/guoluyuan/grok2api
 cd grok2api/grok2api-main/grok2api-main
 cp .env.example .env
 docker compose up -d
@@ -57,7 +57,7 @@ Tail logs:
 docker compose logs -f grok2api
 ```
 
-> The included `docker-compose.yml` already pulls `ghcr.io/jiujiu532/grok2api:latest`. No local build is required.
+> The included `docker-compose.yml` already pulls `mp740429299/guogai_grok2api:latest`. No local build is required.
 
 ### Option 2: Plain Docker
 
@@ -71,7 +71,7 @@ docker run -d \
   -v $(pwd)/data:/app/data \
   -v $(pwd)/logs:/app/logs \
   --restart unless-stopped \
-  ghcr.io/jiujiu532/grok2api:latest
+  mp740429299/guogai_grok2api:latest
 ```
 
 Windows PowerShell:
@@ -86,7 +86,7 @@ docker run -d `
   -v ${PWD}/data:/app/data `
   -v ${PWD}/logs:/app/logs `
   --restart unless-stopped `
-  ghcr.io/jiujiu532/grok2api:latest
+  mp740429299/guogai_grok2api:latest
 ```
 
 ### Option 3: From source
@@ -94,7 +94,7 @@ docker run -d `
 Prerequisites: Python 3.13+ and [uv](https://docs.astral.sh/uv/getting-started/installation/).
 
 ```bash
-git clone https://github.com/jiujiu532/grok2api
+git clone https://github.com/guoluyuan/grok2api
 cd grok2api/grok2api-main/grok2api-main
 cp .env.example .env
 uv sync
@@ -120,11 +120,11 @@ After the service is up, open `http://localhost:8000/admin/login`. Default passw
 docker compose pull
 docker compose up -d
 
-# Pull a specific tag (see GHCR for available versions)
-docker pull ghcr.io/jiujiu532/grok2api:latest
+# Pull a specific tag (see Docker Hub for available versions)
+docker pull mp740429299/guogai_grok2api:latest
 
 # Rollback
-docker run -d ... ghcr.io/jiujiu532/grok2api:<tag>
+docker run -d ... mp740429299/guogai_grok2api:<tag>
 ```
 
 <br>
