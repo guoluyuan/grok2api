@@ -28,9 +28,22 @@ services:
     volumes:
       - ./data:/app/data
       - ./logs:/app/logs
+      - ./patches/headers.py:/app/app/dataplane/proxy/adapters/headers.py:ro
     restart: unless-stopped
     labels:
       - "com.centurylinklabs.watchtower.enable=true"
+    depends_on:
+      - flaresolverr
+
+  flaresolverr:
+    container_name: flaresolverr
+    image: flaresolverr/flaresolverr:latest
+    ports:
+      - "127.0.0.1:8191:8191"
+    environment:
+      TZ: Asia/Shanghai
+      LOG_LEVEL: info
+    restart: unless-stopped
 
   watchtower:
     container_name: grok2api-watchtower

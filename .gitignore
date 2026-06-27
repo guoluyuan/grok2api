@@ -52,4 +52,5 @@ app/data/
 htmlcov/
 
 # Project specific
+backups/
 .ace-tool/
