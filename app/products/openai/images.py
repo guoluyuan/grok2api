@@ -738,13 +738,13 @@ def _resolve_edit_final_url(
     asset_id: str | None,
     user_id: str | None,
 ) -> str | None:
-    """Prefer stable asset content URLs over generated image paths for image-edit finals."""
+    """Resolve the downloadable URL returned by image-edit streaming events."""
+    if raw_url:
+        return _absolutize_asset_url(raw_url)
     if asset_id and user_id:
         resolved = resolve_asset_reference(asset_id, "", user_id=user_id)
         if resolved:
             return resolved
-    if raw_url:
-        return _absolutize_asset_url(raw_url)
     return None
 
 
@@ -780,7 +780,7 @@ def _collect_edit_results(
             final_urls.setdefault(index, resolved_url)
 
     for index, url in enumerate(extract_model_response_urls(obj)):
-        final_urls.setdefault(index, _absolutize_asset_url(url))
+        final_urls[index] = _absolutize_asset_url(url)
 
 
 def _parse_image_index(value: Any) -> int | None:
